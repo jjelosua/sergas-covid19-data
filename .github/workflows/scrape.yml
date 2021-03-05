@@ -15,6 +15,7 @@ jobs:
     - name: Fetch latest data
       run: |-
         yesterday=$(date -d "yesterday" +"%Y-%m-%d")
+        echo "date: ${yesterday}"
         curl "https://coronavirus.sergas.gal/infodatos/${yesterday}_COVID19_Web_CifrasTotais.csv" > CifrasTotais.csv
         curl "https://coronavirus.sergas.gal/infodatos/${yesterday}_COVID19_Web_ActivosCuradosFallecidos.csv" > ActivosCuradosFallecidos.csv
         curl "https://coronavirus.sergas.gal/infodatos/${yesterday}_COVID19_Web_InfectadosPorFecha.csv" > InfectadosPorFecha.csv

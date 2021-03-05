@@ -1,0 +1,32 @@
+name: Scrape latest data
+
+on:
+  push:
+  workflow_dispatch:
+  schedule:
+    - cron:  '0 19 * * *'
+
+jobs:
+  scheduled:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Check out this repo
+      uses: actions/checkout@v2
+    - name: Fetch latest data
+      run: |-
+        yesterday=$(date -d "yesterday" +"%Y-%m-%d")
+        curl "https://coronavirus.sergas.gal/infodatos/${yesterday}_COVID19_Web_CifrasTotais.csv" > CifrasTotais.csv
+        curl "https://coronavirus.sergas.gal/infodatos/${yesterday}_COVID19_Web_ActivosCuradosFallecidos.csv" > ActivosCuradosFallecidos.csv
+        curl "https://coronavirus.sergas.gal/infodatos/${yesterday}_COVID19_Web_InfectadosPorFecha.csv" > InfectadosPorFecha.csv
+        curl "https://coronavirus.sergas.gal/infodatos/${yesterday}_COVID19_Web_PorcentajeInfectadosPorGenero.csv" > PorcentajeInfectadosPorGenero.csv
+        curl "https://coronavirus.sergas.gal/infodatos/${yesterday}_COVID19_Web_Fallecidos.csv" > Fallecidos.csv
+        curl "https://coronavirus.sergas.gal/infodatos/${yesterday}_COVID19_Web_PorcentajeInfeccionesPorFecha.csv" > PorcentajeInfeccionesPorFecha.csv
+        curl "https://coronavirus.sergas.gal/infodatos/${yesterday}_COVID19_Web_OcupacionCamasHospital.csv" > OcupacionCamasHospital.csv        
+    - name: Commit and push if it changed
+      run: |-
+        git config user.name "Automated"
+        git config user.email "actions@users.noreply.github.com"
+        git add -A
+        timestamp=$(date -u)
+        git commit -m "Latest data: ${timestamp}" || exit 0
+        git push
